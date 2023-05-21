@@ -10,13 +10,14 @@ class Element(Base):
 
 
 user_point_table = Table('user_point', Base.metadata,
-                        Column('user_id', Integer, ForeignKey('utilisateurs.id')),
-                        Column('point_id', Integer, ForeignKey('points.id'))
-                        )
+                            Column('user_id', Integer, ForeignKey('utilisateurs.id')),
+                            Column('point_id', Integer, ForeignKey('points.id'))
+                            )
 point_moyen_table = Table('point_moyen', Base.metadata,
-                        Column('point_id', Integer, ForeignKey('points.id')),
-                        Column('moyen_id', Integer, ForeignKey('transports.id'))
-                        )
+                            Column('point_id', Integer, ForeignKey('points.id')),
+                            Column('moyen_id', Integer, ForeignKey('transports.id'))
+                            )
+
 
 class PointInteret(Base):
     __tablename__ = 'points'
@@ -44,8 +45,6 @@ class PointInteret(Base):
     categories = relationship("Categorie",back_populates='ctPoint')
 
     fans = relationship('Utilisateur', secondary=user_point_table, back_populates='favoris')
-
-    
 
 
 
