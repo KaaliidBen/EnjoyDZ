@@ -6,6 +6,7 @@ from sqlalchemy import or_
 from db import database
 from models import models
 from schemas import schemas
+from baseController import *
 
 router = APIRouter(
     prefix='/carte',
@@ -23,6 +24,5 @@ def create(request :schemas.carteCreate,db :Session = Depends(get_db)):
     db.add(new_carte)
     db.commit()
     db.refresh(new_carte)
-
 
     return new_carte

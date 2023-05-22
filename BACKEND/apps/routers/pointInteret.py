@@ -78,7 +78,7 @@ def getPointsBySearch(search: str = '',db :Session = Depends(get_db)):
 
 
 #Returns all Interest Points
-@router.get('/all/', response_model = List[schemas.showPoint])
+@router.get('/all/', response_model = list[schemas.showPoint])
 def get_all_points(db : Session = Depends(get_db)):
     Points = db.query(models.PointInteret).filter().all()
     return Points
