@@ -59,6 +59,7 @@ def modify_horaire(request : schemas.horaire, id : int, db : Session = Depends(g
 
     return horaire_to_update
 
+
 #Delete an Horaire
 @router.delete('/{id}/delete/')
 def delete_horaire(id : int, db : Session = Depends(get_db)):
