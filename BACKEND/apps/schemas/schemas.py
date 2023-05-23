@@ -14,8 +14,12 @@ class carteCreate(BaseModel):
 
 
 class horaire(BaseModel):
+    id : int
     date_debut:datetime
     date_fin:datetime
+
+    class Config():
+        orm_mode = True
 
 class theme(BaseModel):
     Nom:str

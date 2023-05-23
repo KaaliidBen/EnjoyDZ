@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from db import database
 from models import models
 
-from routers import element,pointInteret
+from routers import pointInteret, horaire
 
 from sqlalchemy.orm import Session
 
@@ -17,8 +17,9 @@ app = FastAPI()
 
 models.Base.metadata.create_all(bind=database.engine)
 
-app.include_router(element.router)
 app.include_router(pointInteret.router)
+app.include_router(horaire.router)
+
 
 if __name__ == '__main__':
     uvicorn.run(app, port=5001)
