@@ -8,14 +8,6 @@ class carteCreate(BaseModel):
         orm_mode = True
 
 
-class horaire(BaseModel):
-    id : Optional[int]
-    date_debut:datetime
-    date_fin:datetime
-
-    class Config():
-        orm_mode = True
-
 class theme(BaseModel):
     id : Optional[int]
     Nom : str
@@ -23,8 +15,14 @@ class theme(BaseModel):
     class Config():
         orm_mode = True
 
+
 class categorie(BaseModel):
-    Nom:str
+    id : Optional[int]
+    Nom : str
+
+    class Config():
+        orm_mode = True
+
 
 class pointCreate(BaseModel):
     Nom:str
@@ -49,19 +47,16 @@ class evenement(BaseModel):
         orm_mode = True
 
 class showCarte(BaseModel):
-    #id:int
+    id:int
     Nom: str
+
     class Config(): 
         orm_mode=True 
 
-class showCat(BaseModel):
-    #id:int
-    Nom :str
-    class Config():
-        orm_mode=True
 
 class showTransport(BaseModel):
-    #id:int
-    Type:str
+    id : int
+    Type : str
+    
     class Config():
         orm_mode=True

@@ -17,31 +17,64 @@ get_db=database.get_db
 
 #creer, supprimer, maj, recherche(cat,theme)
 
-@router.post('/',response_model=schemas.showCat,status_code=status.HTTP_201_CREATED)
-def create(request :schemas.showCat,db :Session = Depends(get_db)):
-    
-    new_categorie = models.Categorie(Nom = request.Nom)
+#Add a Categorie
+@router.post('/add/', response_model = schemas.categorie)
+def add_categorie(request : schemas.categorie, db :Session = Depends(get_db)):
+    try:
+        new_categorie = models.Categorie(Nom = request.Nom)
+        db.add(new_categorie)
+        db.commit()
+        db.refresh(new_categorie)
+        return new_categorie
+    except Exception as e:
+        raise HTTPException(status_code = 404, detail = str(e))
 
-    db.add(new_categorie)
-    db.commit()
-    db.refresh(new_categorie)
+
+#Delete a Categorie
+@router.delete('/{id}/delete/')
+def delete_categorie(id:int, db:Session = Depends(get_db)):
+    try:
+        cat = db.query(models.Categorie).filter(models.Categorie.id == id).delete()
+        db.commit()
+        if not cat : 
+            raise HTTPException(status_code = 404, detail = 'Categorie not found')
+        return JSONResponse({"result": True})
+    except Exception as e:
+        raise HTTPException(status_code = 404, detail = str(e))
 
 
-    return new_categorie
-
-@router.delete('/{id}')
-def delete_cat(id:int, db:Session = Depends(get_db)):
-    cat = db.query(models.Categorie).filter(models.Categorie.id == id).delete()
-    db.commit()
-    if not cat : return JSONResponse({"Result":"already deleted"})
-    return JSONResponse({"result": True})
-
-@router.get('/all/',response_model = list[schemas.showCat])
+#Get all Categories
+@router.get('/all/', response_model = list[ schemas.categorie])
 def get_all_cat(db : Session = Depends(get_db)):
-    cats = db.query(models.Categorie).filter().all()
-    return cats
+    try:
+        categories = db.query(models.Categorie).all()
+        return categories
+    except Exception as e:
+        raise HTTPException(status_code=404, detail = str(e))
 
-@router.get('/{id}',response_model=schemas.showCat)
-def get(id:int, db:Session = Depends(get_db)):
-    cat = db.query(models.Categorie).filter(models.Categorie.id == id).first()
-    return cat
+#Get Categorie based on id
+@router.get('/{id}/', response_model = schemas.categorie)
+def get_categorie(id : int, db:Session = Depends(get_db)):
+    try:
+        categorie = db.query(models.Categorie).filter(models.Categorie.id == id).first()
+        if not categorie:
+            raise HTTPException(status_code=404, detail='Categorie not found')
+        return categorie
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+#Update a Categorie
+@router.post('/{id}/update/', response_model = schemas.categorie)
+def update_categorie(id : int, request : schemas.categorie, db : Session = Depends(get_db)):
+    try:
+        categorie_to_update = db.query(models.Categorie).filter(models.Categorie.id == id).first()
+        updated_categorie = request.dict(exclude_unset=True)
+        for key, value in updated_categorie.items():
+            setattr(categorie_to_update, key, value)
+        db.add(categorie_to_update)
+        db.commit()
+        db.refresh(categorie_to_update)
+        return categorie_to_update
+    except Exception as e:
+        raise HTTPException(status_code = 404, detail = str(e))

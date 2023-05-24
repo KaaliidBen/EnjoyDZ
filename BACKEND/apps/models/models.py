@@ -18,17 +18,14 @@ class PointInteret(Base):
     Nom = Column(String)
     Description = Column(TEXT)
 
-    Carte_id = Column(Integer,ForeignKey('cartes.id'))
-    carte = relationship("Carte",back_populates='points')
-
-    Horaire_id = Column(Integer,ForeignKey('horaires.id'))
-    Point_horaires = relationship("Horaire",back_populates='hrPoints')
+    Lieu_id = Column(Integer,ForeignKey('lieux.id'))
+    lieu = relationship("Lieu", back_populates='points')
 
     commentaires = relationship("Commentaire",back_populates='cmPoint')
 
-    moyenTransport = relationship("MoyenTransport",secondary=point_moyen_table, back_populates ='mtPoint')
+    moyenTransport = relationship("MoyenTransport", secondary=point_moyen_table, back_populates ='mtPoint')
     
-    evenements = relationship("Evenement",back_populates='evPoint')
+    evenements = relationship("Evenement", back_populates='evPoint')
 
     Theme_id = Column(Integer,ForeignKey('themes.id'))
     themes = relationship("Theme",back_populates='tmPoint')
@@ -38,23 +35,16 @@ class PointInteret(Base):
 
     fans = relationship('Utilisateur', secondary=user_point_table, back_populates='favoris')
 
-
-class Horaire(Base):
-    __tablename__ = 'horaires'
-    id = Column(Integer, primary_key=True,index=True)
-    date_debut = Column(DateTime)
-    date_fin = Column(DateTime)
-
-    hrPoints = relationship("PointInteret",back_populates='Point_horaires')
     
-    hrEvenements = relationship("Evenement",back_populates='Eve_horaires')
-
-    
-class Carte(Base):
-    __tablename__='cartes'
+class Lieu(Base):
+    __tablename__='lieux'
     id = Column(Integer, primary_key=True,index=True)
     Nom = Column(String)
-    points = relationship("PointInteret",back_populates='carte')
+    Description = Column(TEXT)
+    DateOuverture = Column(DateTime)
+    DateFermeture = Column(DateTime)
+
+    points = relationship("PointInteret", back_populates='lieu')
 
 
 class Theme(Base):
@@ -66,7 +56,7 @@ class Theme(Base):
 
 class Categorie(Base):
     __tablename__='categories'
-    id = Column(Integer, primary_key=True,index=True)
+    id = Column(Integer, primary_key=True, index=True)
     Nom = Column(String)
     ctPoint = relationship("PointInteret", back_populates="categories")
 
@@ -109,9 +99,8 @@ class Evenement(Base):
     id = Column(Integer, primary_key = True, index = True)
     Nom = Column(String)
     Description = Column(TEXT)
-
-    Horaire_id = Column(Integer,ForeignKey('horaires.id'))
-    Eve_horaires = relationship("Horaire",back_populates='hrEvenements')
+    DateDebut = Column(DateTime)
+    DateFin = Column(DateTime)
 
     point_id = Column(Integer,ForeignKey('points.id'))
-    evPoint = relationship("PointInteret",back_populates='evenements')    
+    evPoint = relationship("PointInteret", back_populates='evenements')    

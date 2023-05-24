@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from db import database
 from models import models
 
-from routers import pointInteret, horaire, theme, evenement, carte,categorie,moyenTransport
+from routers import pointInteret, theme, evenement, carte, categorie, moyenTransport
 
 from sqlalchemy.orm import Session
 
@@ -18,7 +18,6 @@ app = FastAPI()
 models.Base.metadata.create_all(bind=database.engine)
 
 app.include_router(pointInteret.router)
-app.include_router(horaire.router)
 app.include_router(theme.router)
 app.include_router(categorie.router)
 app.include_router(evenement.router)

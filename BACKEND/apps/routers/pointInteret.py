@@ -20,19 +20,17 @@ get_db=database.get_db
 
 #Adds an Interest Point
 @router.post('/addPoint/', status_code=status.HTTP_201_CREATED)
-def create_new_point(request : schemas.pointCreate, 
-           horaireid : int,
+def create_new_point(request : schemas.pointCreate,
            themeid : int,
            categorieid : int,
            db : Session = Depends(get_db),
-           carteid : Optional[int]=0
+           lieuid : Optional[int]=0
            ) :
 
     new_point = models.PointInteret(
         Nom = request.Nom, 
         Description = request.Description,
-        Carte_id = carteid,
-        Horaire_id = horaireid,
+        Lieu_id = lieuid,
         Theme_id = themeid,
         Categorie_id = categorieid
         )
