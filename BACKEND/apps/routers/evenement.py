@@ -26,7 +26,7 @@ def get_all_evenements(db : Session = Depends(get_db)):
 
 #Add an Evenement
 @router.post('/add/')
-def add_an_evenement(request : schemas.evenement, db : Session = Depends(get_db)):
+def add_an_evenement(request, db : Session = Depends(get_db)):
     new_evenement = models.Evenement(
         Nom = request.Nom,
         Description = request.Description,

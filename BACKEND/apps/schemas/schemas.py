@@ -40,8 +40,7 @@ class showPoint(BaseModel):
 class evenement(BaseModel):
     Nom : str
     Description : str
-    date_debut : datetime
-    date_fin : datetime
+    Horaire_id : Optional[int]
     point_id : int
 
     class Config():
