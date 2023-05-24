@@ -2,13 +2,6 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
-class elementbase(BaseModel):
-    #id:int
-    Nom:str
-    class Config(): 
-        orm_mode=True
-   
-
 class carteCreate(BaseModel):
     Nom:str
 
@@ -43,3 +36,13 @@ class showPoint(BaseModel):
 
     class Config(): 
         orm_mode=True 
+
+class evenement(BaseModel):
+    Nom : str
+    Description : str
+    date_debut : datetime
+    date_fin : datetime
+    point_id : int
+
+    class Config():
+        orm_mode = True

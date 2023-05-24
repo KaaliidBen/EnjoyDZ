@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Depends,status ,HTTPException, Query
+from fastapi import APIRouter, Depends, status , HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 
@@ -19,15 +19,20 @@ get_db=database.get_db
 #Get all Themes
 @router.get('/all/', response_model = list[schemas.theme])
 def get_all_themes(db : Session = Depends(get_db)):
-    themes = db.query(models.Theme).all()
+    try:
+        themes = db.query(models.Theme).all()
 
-    return themes
+        return themes
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 #Get Theme according to id
 @router.get('/{id}/', response_model = schemas.theme)
 def get_theme(id : int, db : Session = Depends(get_db)):
     theme = db.query(models.Theme).filter(models.Theme.id == id).first()
+    if not theme:
+        raise HTTPException(status_code=404, detail="Theme not found")
 
     return theme
 

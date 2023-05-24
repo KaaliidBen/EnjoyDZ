@@ -14,7 +14,7 @@ router = APIRouter(
     tags=['horaires']
 )
 
-get_db=database.get_db
+get_db = database.get_db
 
 #creer, supprimer, maj, recherche(cat,theme)
 

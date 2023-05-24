@@ -63,11 +63,13 @@ class Theme(Base):
     Nom = Column(String)
     tmPoint = relationship("PointInteret", back_populates="themes")
 
+
 class Categorie(Base):
     __tablename__='categories'
     id = Column(Integer, primary_key=True,index=True)
     Nom = Column(String)
     ctPoint = relationship("PointInteret", back_populates="categories")
+
 
 class Commentaire(Base):
     __tablename__='commentaires'
@@ -80,12 +82,14 @@ class Commentaire(Base):
     user_id = Column(Integer, ForeignKey('utilisateurs.id'))
     cmUser = relationship("Utilisateur", back_populates='commentaires')
 
+
 class MoyenTransport(Base):
     __tablename__='transports'
     id = Column(Integer, primary_key=True,index=True)
     Type = Column(String)
 
     mtPoint = relationship("PointInteret",secondary=point_moyen_table, back_populates = 'moyenTransport')
+
 
 class Utilisateur(Base):
     __tablename__='utilisateurs'
