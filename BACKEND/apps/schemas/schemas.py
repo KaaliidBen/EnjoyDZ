@@ -4,6 +4,8 @@ from datetime import datetime
 
 class carteCreate(BaseModel):
     Nom:str
+    class Config():
+        orm_mode = True
 
 
 class horaire(BaseModel):
@@ -45,3 +47,21 @@ class evenement(BaseModel):
 
     class Config():
         orm_mode = True
+
+class showCarte(BaseModel):
+    #id:int
+    Nom: str
+    class Config(): 
+        orm_mode=True 
+
+class showCat(BaseModel):
+    #id:int
+    Nom :str
+    class Config():
+        orm_mode=True
+
+class showTransport(BaseModel):
+    #id:int
+    Type:str
+    class Config():
+        orm_mode=True
