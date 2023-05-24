@@ -34,11 +34,15 @@ def add_categorie(request : schemas.categorie, db :Session = Depends(get_db)):
 @router.delete('/{id}/delete/')
 def delete_categorie(id:int, db:Session = Depends(get_db)):
     try:
-        cat = db.query(models.Categorie).filter(models.Categorie.id == id).delete()
-        db.commit()
-        if not cat : 
+        categorie_to_delete = db.query(models.Categorie).filter(models.Categorie.id == id).first()
+        if not categorie_to_delete : 
             raise HTTPException(status_code = 404, detail = 'Categorie not found')
-        return JSONResponse({"result": True})
+        db.delete(categorie_to_delete)
+        db.commit()
+        return JSONResponse({
+            "result": True,
+            "message" : "Categorie deleted"}
+        )
     except Exception as e:
         raise HTTPException(status_code = 404, detail = str(e))
 

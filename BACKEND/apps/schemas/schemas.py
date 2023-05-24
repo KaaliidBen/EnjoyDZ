@@ -2,8 +2,13 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
-class carteCreate(BaseModel):
-    Nom:str
+class lieu(BaseModel):
+    id : Optional[int]
+    Nom : str
+    Description : str
+    DateOuverture : datetime
+    DateFermeture : datetime
+    
     class Config():
         orm_mode = True
 
@@ -45,13 +50,6 @@ class evenement(BaseModel):
 
     class Config():
         orm_mode = True
-
-class showCarte(BaseModel):
-    id:int
-    Nom: str
-
-    class Config(): 
-        orm_mode=True 
 
 
 class showTransport(BaseModel):
