@@ -44,8 +44,8 @@ class evenement(BaseModel):
         orm_mode = True
 
 
-class showTransport(BaseModel):
-    id : int
+class transport(BaseModel):
+    id : Optional[int]
     Type : str
     
     class Config():
