@@ -18,12 +18,12 @@ app = FastAPI()
 models.Base.metadata.create_all(bind=database.engine)
 
 app.include_router(pointInteret.router)
-app.include_router(theme.router)
 app.include_router(evenement.router)
 app.include_router(moyenTransport.router)
 
 app.include_router(categorie.router)
 app.include_router(lieu.router)
+app.include_router(theme.router)
 
 
 if __name__ == '__main__':

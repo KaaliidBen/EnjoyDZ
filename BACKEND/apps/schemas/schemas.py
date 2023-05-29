@@ -35,9 +35,10 @@ class pointCreate(BaseModel):
     class Config(): 
         orm_mode=True
 
-class showPoint(BaseModel):
-    Nom:str
-    Description :str
+class point(BaseModel):
+    id : Optional[int]
+    Nom : str
+    Description : str
 
     class Config(): 
         orm_mode=True 
