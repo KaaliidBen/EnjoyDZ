@@ -12,7 +12,6 @@ class lieu(BaseModel):
     class Config():
         orm_mode = True
 
-
 class theme(BaseModel):
     id : Optional[int]
     Nom : str
@@ -20,20 +19,12 @@ class theme(BaseModel):
     class Config():
         orm_mode = True
 
-
 class categorie(BaseModel):
     id : Optional[int]
     Nom : str
 
     class Config():
         orm_mode = True
-
-
-class pointCreate(BaseModel):
-    Nom:str
-    Description:str
-    class Config(): 
-        orm_mode=True
 
 class point(BaseModel):
     id : Optional[int]
