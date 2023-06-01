@@ -50,3 +50,12 @@ class transport(BaseModel):
     
     class Config():
         orm_mode=True
+
+class commentaire(BaseModel):
+    id : Optional[int]
+    user_id : Optional[int]
+    point_id : Optional[int]
+    Content : str
+
+    class Config():
+        orm_mode = True
