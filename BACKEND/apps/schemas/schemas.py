@@ -58,3 +58,32 @@ class showTransport(BaseModel):
     
     class Config():
         orm_mode=True
+
+class showuser(BaseModel):
+    id:int
+    Nom:str
+    Email:str
+    UserType:bool
+    token:str 
+    class Config():
+        orm_mode=True
+
+class createuser(BaseModel):
+    Nom:str
+    Email:str 
+    token:str 
+    class Config():
+        orm_mode=True
+
+class Token(BaseModel):
+    id_token:str
+
+class Access_token(BaseModel):
+    token:str
+
+class Login(BaseModel):
+    username:str
+    password:str
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
