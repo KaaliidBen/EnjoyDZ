@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Depends,status ,HTTPException, Query
+from fastapi import APIRouter,Depends,status ,HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from starlette.responses import JSONResponse
