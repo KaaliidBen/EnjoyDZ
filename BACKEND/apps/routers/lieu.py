@@ -1,12 +1,12 @@
 from fastapi import APIRouter,Depends,status ,HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
+from starlette.responses import JSONResponse
 
 # -----local imports --------------------------------
 from db import database
 from models import models
 from schemas import schemas
-from baseController import *
 
 router = APIRouter(
     prefix='/lieu',

@@ -12,14 +12,12 @@ class lieu(BaseModel):
     class Config():
         orm_mode = True
 
-
 class theme(BaseModel):
     id : Optional[int]
     Nom : str
 
     class Config():
         orm_mode = True
-
 
 class categorie(BaseModel):
     id : Optional[int]
@@ -28,37 +26,34 @@ class categorie(BaseModel):
     class Config():
         orm_mode = True
 
-
-class pointCreate(BaseModel):
-    Nom:str
-    Description:str
-    class Config(): 
-        orm_mode=True
-
-class showPoint(BaseModel):
-    Nom:str
-    Description :str
+class point(BaseModel):
+    id : Optional[int]
+    Nom : str
+    Description : str
 
     class Config(): 
         orm_mode=True 
 
 class evenement(BaseModel):
+    id : Optional[int]
     Nom : str
     Description : str
-    Horaire_id : Optional[int]
+    DateDebut : datetime
+    DateFin : datetime
     point_id : int
 
     class Config():
         orm_mode = True
 
 
-class showTransport(BaseModel):
-    id : int
+class transport(BaseModel):
+    id : Optional[int]
     Type : str
     
     class Config():
         orm_mode=True
 
+<<<<<<< HEAD
 class showuser(BaseModel):
     id:int
     Nom:str
@@ -87,3 +82,13 @@ class Login(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
+=======
+class commentaire(BaseModel):
+    id : Optional[int]
+    user_id : Optional[int]
+    point_id : Optional[int]
+    Content : str
+
+    class Config():
+        orm_mode = True
+>>>>>>> b3413d25f7293a2a6b375d667c503c39494cba2a

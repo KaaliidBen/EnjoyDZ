@@ -18,65 +18,102 @@ get_db=database.get_db
 #creer, supprimer, maj, recherche(cat,theme)
 #response_model=schemas.pointCreate
 
+#Get an Interest Point based on id
+@router.get('/{id}/',response_model=schemas.point)
+def get_point(id:int, db:Session = Depends(get_db)):
+    try:
+        point = db.query(models.PointInteret).filter(models.PointInteret.id == id).first()
+        return point
+    except Exception as e:
+        raise HTTPException(status_code = 404, detail = str(e))
+
+
 #Adds an Interest Point
-@router.post('/addPoint/', status_code=status.HTTP_201_CREATED)
-def create_new_point(request : schemas.pointCreate,
+@router.post('/add/', status_code=status.HTTP_201_CREATED)
+def create_new_point(request : schemas.point,
            themeid : int,
            categorieid : int,
            db : Session = Depends(get_db),
            lieuid : Optional[int]=0
            ) :
+    try:
+        new_point = models.PointInteret(
+            Nom = request.Nom, 
+            Description = request.Description,
+            Lieu_id = lieuid,
+            Theme_id = themeid,
+            Categorie_id = categorieid
+            )
 
-    new_point = models.PointInteret(
-        Nom = request.Nom, 
-        Description = request.Description,
-        Lieu_id = lieuid,
-        Theme_id = themeid,
-        Categorie_id = categorieid
-        )
+        db.add(new_point)
+        db.commit()
+        db.refresh(new_point)
 
-    db.add(new_point)
-    db.commit()
-    db.refresh(new_point)
-
-    return new_point
+        return new_point
+    except Exception as e:
+        return HTTPException(status_code = 404, detail = str(e))
 
 
 #Deletes an Interest Point
-@router.delete('/{id}')
+@router.delete('/{id}/delete/')
 def delete_point(id:int, db:Session = Depends(get_db)):
-    point = db.query(models.PointInteret).filter(models.PointInteret.id == id).delete()
-    db.commit()
-    if not point : return JSONResponse({"Result":"already deleted"})
+    try:
+        point = db.query(models.PointInteret).filter(models.PointInteret.id == id).delete()
+        db.commit()
+        if not point : return JSONResponse({"Result":"already deleted"})
 
-    return JSONResponse({"result": True})
+        return JSONResponse({"result": True})
+    except Exception as e:
+        return HTTPException(status_code = 404, detail = str(e))
 
 
 #Returns Interest Points filtered by category or theme or both
-@router.get('/filtered/',response_model=List[schemas.showPoint])
-def getPointsFiltered(cat:int=0, theme:int=0, db :Session = Depends(get_db)):
-    Point = None
-    if cat == 0:
-        Points=db.query(models.PointInteret).filter( models.PointInteret.Theme_id == theme).all()
-    elif theme == 0:
-        Points=db.query(models.PointInteret).filter( models.PointInteret.Categorie_id == cat ).all()
-    else:
-        Points=db.query(models.PointInteret).filter( models.PointInteret.Categorie_id == cat ,
-                                                    models.PointInteret.Theme_id == theme).all()
+@router.get('/filtered/',response_model=List[schemas.point])
+def getPointsFiltered(cat : int=0, theme : int=0, db : Session = Depends(get_db)):
+    try:
+        if cat == 0:
+            Points=db.query(models.PointInteret).filter( models.PointInteret.Theme_id == theme).all()
+        elif theme == 0:
+            Points=db.query(models.PointInteret).filter( models.PointInteret.Categorie_id == cat ).all()
+        else:
+            Points=db.query(models.PointInteret).filter( models.PointInteret.Categorie_id == cat ,
+                                                        models.PointInteret.Theme_id == theme).all()
 
-    return Points
+        return Points
+    except Exception as e:
+        return HTTPException(status_code = 404, detail = str(e))
     
 
 #Returns all Interest Points containing a search term in their description
-@router.get('/bySearch/',response_model = List[schemas.showPoint])
+@router.get('/bySearch/',response_model = List[schemas.point])
 def getPointsBySearch(search: str = '',db :Session = Depends(get_db)):
-
-    Points=db.query(models.PointInteret).filter(models.PointInteret.Description.contains(search)).all()
-    return Points
+    try:
+        Points=db.query(models.PointInteret).filter(models.PointInteret.Description.contains(search)).all()
+        return Points
+    except Exception as e:
+        return HTTPException(status_code = 404, detail = str(e))
 
 
 #Returns all Interest Points
-@router.get('/all/', response_model = list[schemas.showPoint])
+@router.get('/all/', response_model = list[schemas.point])
 def get_all_points(db : Session = Depends(get_db)):
-    Points = db.query(models.PointInteret).filter().all()
-    return Points
+    try:
+        Points = db.query(models.PointInteret).all()
+        return Points
+    except Exception as e:
+        return HTTPException(status_code = 404, detail = str(e))
+
+#Update an Interest Point
+@router.post('/{id}/update/', response_model = schemas.point)
+def update_point(id : int, request : schemas.point, db : Session = Depends(get_db)):
+    try:
+        point_to_update = db.query(models.PointInteret).filter(models.PointInteret.id == id).first()
+        updated_point = request.dict(exclude_unset=True)
+        for key, value in updated_point.items():
+            setattr(point_to_update, key, value)
+        db.add(point_to_update)
+        db.commit()
+        db.refresh(point_to_update)
+        return point_to_update
+    except Exception as e:
+        raise HTTPException(status_code = 404, detail = str(e))
