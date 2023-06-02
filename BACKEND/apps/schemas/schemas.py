@@ -35,9 +35,11 @@ class point(BaseModel):
         orm_mode=True 
 
 class evenement(BaseModel):
+    id : Optional[int]
     Nom : str
     Description : str
-    Horaire_id : Optional[int]
+    DateDebut : datetime
+    DateFin : datetime
     point_id : int
 
     class Config():
