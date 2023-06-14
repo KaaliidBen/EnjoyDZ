@@ -84,10 +84,11 @@ class MoyenTransport(Base):
 class Utilisateur(Base):
     __tablename__='utilisateurs'
     id = Column(Integer, primary_key=True,index=True)
-    UserType = Column(Boolean,default=False)    
+    UserType = Column(Boolean,default=False)
+    token = Column(TEXT)  
     Nom = Column(String)
     Email = Column(String, unique=True)
-    HashedPassword = Column(String)
+    #HashedPassword = Column(String)
 
     favoris = relationship('PointInteret', secondary=user_point_table, back_populates='fans')
 

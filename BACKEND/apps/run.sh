@@ -1,0 +1,6 @@
+source ../../myenv/bin/activate
+export GOOGLE_CLIENT_ID=947244733594-bitcc5abv7f4d8gfbrr50bujjc19q16t.apps.googleusercontent.com
+export GOOGLE_CLIENT_SECRET=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
+export SECRET_KEY=XNRDuyzlQU6OuYZ_VCsjwSSSlMpQ0JcjsrAGcNHK
+export OAUTHLIB_INSECURE_TRANSPORT=1
+python main.py
