@@ -40,9 +40,10 @@ def get_user(id:int,db :Session = Depends(get_db)):
 @router.post('/add/', response_model = schemas.showuser)
 def add_user(request:schemas.createuser ,db :Session = Depends(get_db)):
     try:
+        hashed_password = request.Password + 'hash'
         new_user = models.Utilisateur(Nom=request.Nom, 
                                       Email=request.Email,
-                                      token = request.token)
+                                      HashedPassword = hashed_password)
         db.add(new_user)
         db.commit()
         db.refresh(new_user)

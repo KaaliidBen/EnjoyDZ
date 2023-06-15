@@ -32,8 +32,7 @@ GOOGLE_CLIENT_SECRET='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'
 CLIENT_ID='309969578058-djuekces314halkds6uofbht02himl4o.apps.googleusercontent.com'
 
 
-def get_user_email(token: str = Depends(oauth2_scheme)):
-
+def get_user_email(token : str = Depends(oauth2_scheme)):
     try:
         idinfo = id_token.verify_oauth2_token(token,requests.Request(), CLIENT_ID)
         return idinfo['email']
@@ -104,7 +103,7 @@ async def get_current_user_email(token: str = Depends(oauth2_scheme),db :Session
         print('second test failed')
         raise CREDENTIALS_EXCEPTION
     print('testing db acces')
-    new_user=db.query(models.Utilisateur).filter(models.Utilisateur.Email ==email ).first()
+    new_user=db.query(models.Utilisateur).filter(models.Utilisateur.Email == email).first()
     if new_user:
         return email
     print('third test failed')

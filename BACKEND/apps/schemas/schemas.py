@@ -58,20 +58,30 @@ class showuser(BaseModel):
     Nom : str
     Email : str
     UserType : Optional[bool]
-    token : Optional[str] 
+    #token : Optional[str] 
+    HashedPassword : str
     class Config():
         orm_mode=True
 
 class createuser(BaseModel):
     Nom : str
     Email : str 
-    token : str 
+    #token : str 
+    Password : str
     class Config():
         orm_mode=True
 
-class Token(BaseModel):
-    id_token : str
+class TokenPayload(BaseModel):
+    sub: str = None
+    exp: int = None
 
+#class Token(BaseModel):
+#    id_token : str
+
+class Token(BaseModel):
+    access_token : str
+    refresh_token : str
+    
 class Access_token(BaseModel):
     token : str
 
