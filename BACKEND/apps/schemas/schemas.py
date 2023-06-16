@@ -30,6 +30,7 @@ class point(BaseModel):
     id : Optional[int]
     Nom : str
     Description : str
+    Wilaya : str
 
     class Config(): 
         orm_mode=True 

@@ -25,7 +25,7 @@ def get_all_themes(db : Session = Depends(get_db)):
 
         return themes
     except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 #Get Theme according to id
@@ -35,7 +35,7 @@ def get_theme(id : int, db : Session = Depends(get_db)):
         theme = db.query(models.Theme).filter(models.Theme.id == id).first()
         return theme
     except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
 
 #Add a Theme
 @router.post('/add/', response_model = schemas.theme, status_code=status.HTTP_201_CREATED)
@@ -48,7 +48,7 @@ def add_theme(request :schemas.theme, db :Session = Depends(get_db)):
 
         return new_theme
     except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
 
 #Update a Theme
 @router.post('/{id}/update/', response_model = schemas.theme)
@@ -63,7 +63,7 @@ def modify_theme(id : int, request : schemas.theme, db : Session = Depends(get_d
 
         return theme_to_update
     except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
 
 #Delete a Theme
 @router.delete('/{id}/delete/')
@@ -77,4 +77,4 @@ def delete_theme(id : int, db : Session = Depends(get_db)):
             "message" : "Theme deleted"
             })
     except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))

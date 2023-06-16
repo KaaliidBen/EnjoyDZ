@@ -27,7 +27,7 @@ def add_categorie(request : schemas.categorie, db :Session = Depends(get_db)):
         db.refresh(new_categorie)
         return new_categorie
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 
 #Delete a Categorie
@@ -36,7 +36,7 @@ def delete_categorie(id:int, db:Session = Depends(get_db)):
     try:
         categorie_to_delete = db.query(models.Categorie).filter(models.Categorie.id == id).first()
         if not categorie_to_delete : 
-            raise HTTPException(status_code = 404, detail = 'Categorie not found')
+            raise HTTPException(status_code = 400, detail = 'Categorie not found')
         db.delete(categorie_to_delete)
         db.commit()
         return JSONResponse({
@@ -44,7 +44,7 @@ def delete_categorie(id:int, db:Session = Depends(get_db)):
             "message" : "Categorie deleted"}
         )
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 
 #Get all Categories
@@ -54,7 +54,7 @@ def get_all_cat(db : Session = Depends(get_db)):
         categories = db.query(models.Categorie).all()
         return categories
     except Exception as e:
-        raise HTTPException(status_code=404, detail = str(e))
+        raise HTTPException(status_code=400, detail = str(e))
 
 #Get Categorie based on id
 @router.get('/{id}/', response_model = schemas.categorie)
@@ -62,10 +62,10 @@ def get_categorie(id : int, db:Session = Depends(get_db)):
     try:
         categorie = db.query(models.Categorie).filter(models.Categorie.id == id).first()
         if not categorie:
-            raise HTTPException(status_code=404, detail='Categorie not found')
+            raise HTTPException(status_code=400, detail='Categorie not found')
         return categorie
     except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 #Update a Categorie
@@ -81,4 +81,4 @@ def update_categorie(id : int, request : schemas.categorie, db : Session = Depen
         db.refresh(categorie_to_update)
         return categorie_to_update
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))

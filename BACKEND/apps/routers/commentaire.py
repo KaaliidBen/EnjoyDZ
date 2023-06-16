@@ -27,7 +27,7 @@ def add_commentaire(request:schemas.commentaire, db:Session =Depends(get_db)):
 
         return commentaire
     except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 @router.delete('/{id}/delete/')
 def delete_commentaire(id:int, db:Session = Depends(get_db)):
@@ -36,7 +36,7 @@ def delete_commentaire(id:int, db:Session = Depends(get_db)):
         db.commit()
         return JSONResponse({"result":True})
     except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 @router.get('/all/',response_model = list[schemas.commentaire])
 def get_all_commentaires(db : Session = Depends(get_db)):
@@ -44,7 +44,7 @@ def get_all_commentaires(db : Session = Depends(get_db)):
         commentaires =  db.query(models.Commentaire).all()
         return commentaires
     except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 @router.get('/{id}/',response_model=schemas.commentaire)
 def get_commentaire(id:int , db:Session = Depends(get_db)):
@@ -52,7 +52,7 @@ def get_commentaire(id:int , db:Session = Depends(get_db)):
         commentaire = db.query(models.Commentaire).filter(models.Commentaire.id == id).first()
         return commentaire
     except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
     
 @router.post('/{id}/update/', response_model = schemas.commentaire)
 def update_commentaire(id : int, request : schemas.commentaire, db : Session = Depends(get_db)):
@@ -66,4 +66,4 @@ def update_commentaire(id : int, request : schemas.commentaire, db : Session = D
         db.refresh(commentaire_to_update)
         return commentaire_to_update
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))

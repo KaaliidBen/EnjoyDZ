@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status , HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
@@ -22,7 +22,7 @@ def get_all_evenements(db : Session = Depends(get_db)):
         evenements = db.query(models.Evenement).all()
         return evenements
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 
 #Get Evenement based on id
@@ -32,7 +32,7 @@ def get_evenement(id : int, db : Session = Depends(get_db)):
         evenement = db.query(models.Evenement).filter(models.Evenement.id == id).first()
         return evenement
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 #Add an Evenement
 @router.post('/add/')
@@ -51,7 +51,7 @@ def add_evenement(request : schemas.evenement, db : Session = Depends(get_db)):
 
         return new_evenement
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
     
 
 #Delete an Evenement
@@ -65,7 +65,7 @@ def delete_evenement(id : int, db : Session = Depends(get_db)):
             "message" : "Evenement deleted"
         })
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
     
 #Update an Evenement
 @router.post("/{id}/update/", response_model = schemas.evenement)
@@ -80,4 +80,4 @@ def update_evenement(request : schemas.evenement, id : int, db : Session = Depen
         db.refresh(evenement_to_update)
         return evenement_to_update
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))

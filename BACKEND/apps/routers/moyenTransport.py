@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
-# -----local imports --------------------------------
+# --------------------------- local imports --------------------------------
 from db import database
 from models import models
 from schemas import schemas
@@ -24,7 +24,7 @@ def create_moyen(request:schemas.transport,db:Session =Depends(get_db)):
 
         return moyen
     except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 404, detail = str(e))
 
 @router.delete('/{id}/delete/')
 def delete_moyen(id:int, db:Session = Depends(get_db)):
@@ -34,7 +34,7 @@ def delete_moyen(id:int, db:Session = Depends(get_db)):
         if not moyen : return JSONResponse({"Result":"already deleted"})
         return JSONResponse({"result":True})
     except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 404, detail = str(e))
 
 @router.get('/all/',response_model = list[schemas.transport])
 def get_all_moyens(db : Session = Depends(get_db)):
@@ -42,7 +42,7 @@ def get_all_moyens(db : Session = Depends(get_db)):
         moyens =  db.query(models.MoyenTransport).filter().all()
         return moyens
     except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 404, detail = str(e))
 
 @router.get('/{id}/',response_model=schemas.transport)
 def get_moyen(id:int , db:Session = Depends(get_db)):
@@ -50,7 +50,7 @@ def get_moyen(id:int , db:Session = Depends(get_db)):
         moyen  =db.query(models.MoyenTransport).filter(models.MoyenTransport.id == id).first()
         return moyen
     except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 404, detail = str(e))
     
 @router.post('/{id}/update/', response_model = schemas.transport)
 def update_moyen(id : int, request : schemas.transport, db : Session = Depends(get_db)):

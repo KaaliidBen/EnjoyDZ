@@ -32,7 +32,7 @@ def add_lieu(request : schemas.lieu, db : Session = Depends(get_db)):
         db.refresh(new_lieu)
         return new_lieu
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 #Delete a Lieu
 @router.delete('/{id}/delete/')
@@ -40,7 +40,7 @@ def delete_lieu(id:int, db:Session = Depends(get_db)):
     try:
         lieu_to_delete = db.query(models.Lieu).filter(models.Lieu.id == id).first()
         if not lieu_to_delete :
-            raise HTTPException(status_code = 404, detail = "Lieu not found")
+            raise HTTPException(status_code = 400, detail = "Lieu not found")
         db.delete(lieu_to_delete)
         db.commit()
         return JSONResponse({
@@ -48,7 +48,7 @@ def delete_lieu(id:int, db:Session = Depends(get_db)):
             "message" : "Lieu deleted"
             })
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 #Get all Lieux
 @router.get('/all/', response_model = list[schemas.lieu])
@@ -57,7 +57,7 @@ def get_all_lieux(db : Session = Depends(get_db)):
         lieux  = db.query(models.Lieu).all()
         return lieux
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 #Get a Lieu based on id
 @router.get('/{id}/',response_model=schemas.lieu)
@@ -66,7 +66,7 @@ def get_lieu(id:int, db:Session = Depends(get_db)):
         lieu = db.query(models.Lieu).filter(models.Lieu.id == id).first()
         return lieu
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 #Update a Lieu
 @router.post('/{id}/update/', response_model = schemas.lieu)
@@ -81,4 +81,4 @@ def update_lieu(id : int, request : schemas.lieu, db : Session = Depends(get_db)
         db.refresh(lieu_to_update)
         return lieu_to_update
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))

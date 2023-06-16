@@ -14,9 +14,10 @@ point_moyen_table = Table('point_moyen', Base.metadata,
 
 class PointInteret(Base):
     __tablename__ = 'points'
-    id = Column(Integer,primary_key=True,index=True)
+    id = Column(Integer, primary_key=True,index=True)
     Nom = Column(String)
     Description = Column(TEXT)
+    Wilaya = Column(String)
 
     Lieu_id = Column(Integer,ForeignKey('lieux.id'))
     lieu = relationship("Lieu", back_populates='points')

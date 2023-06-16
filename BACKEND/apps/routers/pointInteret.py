@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Depends,status ,HTTPException, Query
+from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from typing import Optional, List
@@ -20,12 +20,12 @@ get_db=database.get_db
 
 #Get an Interest Point based on id
 @router.get('/{id}/',response_model=schemas.point)
-def get_point(id:int, db:Session = Depends(get_db)):
+def get_point(id : int, db : Session = Depends(get_db)):
     try:
         point = db.query(models.PointInteret).filter(models.PointInteret.id == id).first()
         return point
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 
 #Adds an Interest Point
@@ -34,12 +34,13 @@ def create_new_point(request : schemas.point,
            themeid : int,
            categorieid : int,
            db : Session = Depends(get_db),
-           lieuid : Optional[int]=0
+           lieuid : Optional[int] = 0
            ) :
     try:
         new_point = models.PointInteret(
             Nom = request.Nom, 
             Description = request.Description,
+            Wilaya = request.Wilaya,
             Lieu_id = lieuid,
             Theme_id = themeid,
             Categorie_id = categorieid
@@ -51,8 +52,17 @@ def create_new_point(request : schemas.point,
 
         return new_point
     except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
+
+#Returns all Interest Points
+@router.get('/all', response_model = list[schemas.point])
+def get_all_points(db : Session = Depends(get_db)):
+    try:
+        points = db.query(models.PointInteret).filter().all()
+        return points
+    except Exception as e:
+        raise HTTPException(status_code = 400, detail = str(e))
 
 #Deletes an Interest Point
 @router.delete('/{id}/delete/')
@@ -64,11 +74,11 @@ def delete_point(id:int, db:Session = Depends(get_db)):
 
         return JSONResponse({"result": True})
     except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 
 #Returns Interest Points filtered by category or theme or both
-@router.get('/filtered/',response_model=List[schemas.point])
+@router.get('/filtered',response_model=List[schemas.point])
 def getPointsFiltered(cat : int=0, theme : int=0, db : Session = Depends(get_db)):
     try:
         if cat == 0:
@@ -81,27 +91,20 @@ def getPointsFiltered(cat : int=0, theme : int=0, db : Session = Depends(get_db)
 
         return Points
     except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
     
 
 #Returns all Interest Points containing a search term in their description
-@router.get('/bySearch/',response_model = List[schemas.point])
+@router.get('/bySearch',response_model = List[schemas.point])
 def getPointsBySearch(search: str = '',db :Session = Depends(get_db)):
     try:
-        Points=db.query(models.PointInteret).filter(models.PointInteret.Description.contains(search)).all()
+        Points = db.query(models.PointInteret).filter(or_(models.PointInteret.Description.contains(search),
+                                                          models.PointInteret.Nom.contains(search),
+                                                          models.PointInteret.Wilaya.contains(search))).all()
         return Points
     except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
-
-#Returns all Interest Points
-@router.get('/all/', response_model = list[schemas.point])
-def get_all_points(db : Session = Depends(get_db)):
-    try:
-        Points = db.query(models.PointInteret).all()
-        return Points
-    except Exception as e:
-        return HTTPException(status_code = 404, detail = str(e))
 
 #Update an Interest Point
 @router.post('/{id}/update/', response_model = schemas.point)
@@ -116,4 +119,4 @@ def update_point(id : int, request : schemas.point, db : Session = Depends(get_d
         db.refresh(point_to_update)
         return point_to_update
     except Exception as e:
-        raise HTTPException(status_code = 404, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
