@@ -20,7 +20,8 @@ def add_commentaire(request:schemas.commentaire, db:Session =Depends(get_db)):
         commentaire = models.Commentaire(
             user_id = request.user_id,
             point_id = request.point_id,
-            Content = request.Content)
+            Content = request.Content
+            )
         db.add(commentaire)
         db.commit()
         db.refresh(commentaire)

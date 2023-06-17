@@ -19,8 +19,8 @@ class PointInteret(Base):
     Description = Column(TEXT)
     Wilaya = Column(String)
     Region = Column(String)
-    DateOuverture = Column(DateTime)
-    DateFermeture = Column(DateTime)
+    TempsOuverture = Column(String)
+    TempsFermeture = Column(String)
 
     Latitude = Column(Float)
     Longitude = Column(Float)

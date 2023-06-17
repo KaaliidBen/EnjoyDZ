@@ -39,8 +39,8 @@ class point(BaseModel):
     Description : str
     Wilaya : str
     Region : str
-    DateOuverture : datetime
-    DateFermeture : datetime
+    TempsOuverture : str
+    TempsFermeture : str
     Latitude : float
     Longitude : float
     themes : Optional[theme]

@@ -23,6 +23,7 @@ get_db=database.get_db
 def get_point(id : int, db : Session = Depends(get_db)):
     try:
         point = db.query(models.PointInteret).filter(models.PointInteret.id == id).first()
+        print(point)
         return point
     except Exception as e:
         raise HTTPException(status_code = 400, detail = str(e))
@@ -44,8 +45,8 @@ def create_new_point(request : schemas.point,
             Region = request.Region,
             Latitude = request.Latitude,
             Longitude = request.Longitude,
-            DateOuverture = request.DateOuverture,
-            DateFermeture = request.DateFermeture,
+            TempsOuverture = request.TempsOuverture,
+            TempsFermeture = request.TempsFermeture,
             Theme_id = themeid,
             Categorie_id = categorieid
             )
@@ -88,7 +89,7 @@ def delete_point(id:int, db:Session = Depends(get_db)):
 
 #Returns Interest Points filtered by category or theme or both
 @router.get('/filtered',response_model=List[schemas.point])
-def getPointsFiltered(cat : int=0, theme : int=0, db : Session = Depends(get_db)):
+def getPointsFiltered(cat : int=0, theme : int = 0, db : Session = Depends(get_db)):
     try:
         if cat == 0:
             Points=db.query(models.PointInteret).filter( models.PointInteret.Theme_id == theme).all()
