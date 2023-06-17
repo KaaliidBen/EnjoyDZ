@@ -5,6 +5,7 @@ from schemas import schemas
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 from utils import get_hashed_password
+from deps import get_current_user
 
 router = APIRouter(
     prefix='/user',

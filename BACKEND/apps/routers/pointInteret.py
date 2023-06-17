@@ -33,6 +33,7 @@ def get_point(id : int, db : Session = Depends(get_db)):
 def create_new_point(request : schemas.point,
            themeid : int,
            categorieid : int,
+           moyen_ids : list[int],
            db : Session = Depends(get_db),
            ) :
     try:
@@ -48,6 +49,9 @@ def create_new_point(request : schemas.point,
             Theme_id = themeid,
             Categorie_id = categorieid
             )
+        for moyen_id in moyen_ids:
+            moyen = db.query(models.MoyenTransport).filter(models.MoyenTransport.id == moyen_id).first()
+            new_point.moyenTransport.append(moyen)
         db.add(new_point)
         db.commit()
         db.refresh(new_point)

@@ -26,6 +26,13 @@ class categorie(BaseModel):
     class Config():
         orm_mode = True
 
+class transport(BaseModel):
+    id : Optional[int]
+    Type : str
+    
+    class Config():
+        orm_mode=True
+
 class point(BaseModel):
     id : Optional[int]
     Nom : str
@@ -38,6 +45,7 @@ class point(BaseModel):
     Longitude : float
     themes : Optional[theme]
     categories : Optional[categorie]
+    moyenTransport : Optional[list[transport]]
 
     class Config(): 
         orm_mode=True 
@@ -53,13 +61,6 @@ class evenement(BaseModel):
     class Config():
         orm_mode = True
 
-
-class transport(BaseModel):
-    id : Optional[int]
-    Type : str
-    
-    class Config():
-        orm_mode=True
 
 class showuser(BaseModel):
     id : Optional[int]
@@ -95,6 +96,7 @@ class TokenPayload(BaseModel):
 #    id_token : str
 
 class Token(BaseModel):
+    user_id : int
     access_token : str
     refresh_token : str
     

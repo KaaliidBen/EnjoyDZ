@@ -44,21 +44,22 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(),
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect email or password"
+            detail="User not found for given email"
         )
 
     hashed_pass = user.HashedPassword
     if not verify_password(form_data.password, hashed_pass):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect email or password"
+            detail="Incorrect password"
         )
     
     return {
+        "user_id" : user.id,
         "access_token": create_access_token(user.Email),
         "refresh_token": create_refresh_token(user.Email),
     }
 
 @router.get('/me', response_model=schemas.showuser)
-async def get_me(user: schemas.showuser = Depends(get_current_user)):
+async def get_me(user : schemas.showuser = Depends(get_current_user)):
     return user
