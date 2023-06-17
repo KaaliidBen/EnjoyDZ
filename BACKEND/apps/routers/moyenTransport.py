@@ -29,7 +29,10 @@ def create_moyen(request:schemas.transport,db:Session =Depends(get_db)):
 @router.delete('/{id}/delete/')
 def delete_moyen(id:int, db:Session = Depends(get_db)):
     try:
-        moyen = db.query(models.MoyenTransport).filter(models.MoyenTransport.id == id).delete()
+        moyen = db.query(models.MoyenTransport).filter(models.MoyenTransport.id == id).first()
+        if not moyen:
+            raise HTTPException(status_code=404, detail="Moyen not found")
+        db.delete(moyen)
         db.commit()
         if not moyen : return JSONResponse({"Result":"already deleted"})
         return JSONResponse({"result":True})
@@ -47,7 +50,9 @@ def get_all_moyens(db : Session = Depends(get_db)):
 @router.get('/{id}/',response_model=schemas.transport)
 def get_moyen(id:int , db:Session = Depends(get_db)):
     try:
-        moyen  =db.query(models.MoyenTransport).filter(models.MoyenTransport.id == id).first()
+        moyen = db.query(models.MoyenTransport).filter(models.MoyenTransport.id == id).first()
+        if not moyen:
+            raise HTTPException(status_code=404, detail="Moyen not found")
         return moyen
     except Exception as e:
         raise HTTPException(status_code = 404, detail = str(e))
@@ -56,6 +61,8 @@ def get_moyen(id:int , db:Session = Depends(get_db)):
 def update_moyen(id : int, request : schemas.transport, db : Session = Depends(get_db)):
     try:
         moyen_to_update = db.query(models.MoyenTransport).filter(models.MoyenTransport.id == id).first()
+        if not moyen_to_update:
+            raise HTTPException(status_code=404, detail="Moyen not found")
         updated_moyen = request.dict(exclude_unset=True)
         for key, value in updated_moyen.items():
             setattr(moyen_to_update, key, value)

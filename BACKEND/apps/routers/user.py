@@ -57,6 +57,8 @@ def add_admin(request : schemas.addAdmin, db :Session = Depends(get_db)):
 def modify_user(request : schemas.showuser, id : int, db : Session = Depends(get_db)):
     try:
         user_to_update = db.query(models.Utilisateur).filter(models.Utilisateur.id == id).first()
+        if not user_to_update:
+            raise HTTPException(400, detail="User not found")
         updated_user = request.dict(exclude_unset=True)
         for key, value in updated_user.items() :
             setattr(user_to_update, key, value)
@@ -74,6 +76,8 @@ def modify_user(request : schemas.showuser, id : int, db : Session = Depends(get
 def delete_user(id : int, db : Session = Depends(get_db)):
     try:
         user_to_delete = db.query(models.Utilisateur).filter(models.Utilisateur.id == id).first()
+        if not user_to_delete:
+            raise HTTPException(400, detail="User not found")
         db.delete(user_to_delete)
         db.commit()
 

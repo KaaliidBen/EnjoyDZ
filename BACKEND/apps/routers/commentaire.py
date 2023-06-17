@@ -32,7 +32,10 @@ def add_commentaire(request:schemas.commentaire, db:Session =Depends(get_db)):
 @router.delete('/{id}/delete/')
 def delete_commentaire(id:int, db:Session = Depends(get_db)):
     try:
-        commentaire = db.query(models.Commentaire).filter(models.Commentaire.id == id).delete()
+        commentaire_to_delete = db.query(models.Commentaire).filter(models.Commentaire.id == id).first()
+        if not commentaire_to_delete:
+            raise HTTPException(status_code=404, detail="Comment not found")
+        db.delete(commentaire_to_delete)
         db.commit()
         return JSONResponse({"result":True})
     except Exception as e:
@@ -50,6 +53,8 @@ def get_all_commentaires(db : Session = Depends(get_db)):
 def get_commentaire(id:int , db:Session = Depends(get_db)):
     try:
         commentaire = db.query(models.Commentaire).filter(models.Commentaire.id == id).first()
+        if not commentaire:
+            raise HTTPException(status_code=404, detail="Comment not found")
         return commentaire
     except Exception as e:
         raise HTTPException(status_code = 400, detail = str(e))
@@ -58,6 +63,8 @@ def get_commentaire(id:int , db:Session = Depends(get_db)):
 def update_commentaire(id : int, request : schemas.commentaire, db : Session = Depends(get_db)):
     try:
         commentaire_to_update = db.query(models.Commentaire).filter(models.Commentaire.id == id).first()
+        if not commentaire_to_update:
+            raise HTTPException(status_code=404, detail="Comment not found")
         updated_commentaire = request.dict(exclude_unset=True)
         for key, value in updated_commentaire.items():
             setattr(commentaire_to_update, key, value)

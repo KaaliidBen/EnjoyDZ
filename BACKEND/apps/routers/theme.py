@@ -33,6 +33,8 @@ def get_all_themes(db : Session = Depends(get_db)):
 def get_theme(id : int, db : Session = Depends(get_db)):
     try:
         theme = db.query(models.Theme).filter(models.Theme.id == id).first()
+        if not theme:
+            raise HTTPException(status_code=404, detail="Theme not found")
         return theme
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -55,6 +57,8 @@ def add_theme(request :schemas.theme, db :Session = Depends(get_db)):
 def modify_theme(id : int, request : schemas.theme, db : Session = Depends(get_db)):
     try:
         theme_to_update = db.query(models.Theme).filter(models.Theme.id == id).first()
+        if not theme_to_update:
+            raise HTTPException(status_code=404, detail="Theme not found")
         updated_theme = request.dict(exclude_unset=True)
         for key, value in updated_theme.items():
             setattr(theme_to_update, key, value)
@@ -70,6 +74,8 @@ def modify_theme(id : int, request : schemas.theme, db : Session = Depends(get_d
 def delete_theme(id : int, db : Session = Depends(get_db)):
     try:
         theme_to_delete = db.query(models.Theme).filter(models.Theme.id == id).first()
+        if not theme_to_delete:
+            raise HTTPException(status_code=404, detail="Theme not found")
         db.delete(theme_to_delete)
         db.commit()
         return JSONResponse({

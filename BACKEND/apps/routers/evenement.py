@@ -14,20 +14,6 @@ router = APIRouter(
 
 get_db = database.get_db
 
-def sendNotification(Description : str, point_id : int, db):
-    point = db.query(models.PointInteret).filter(models.PointInteret.id == point_id).first()
-    following_users = point.fans
-    for user in following_users:
-        new_notification = models.Notification(
-            Content = f"New event at {point.Nom} : {Description}",
-            Read = False
-        )
-        user.notifications.append(new_notification)
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-
-
 #Get all Evenements
 @router.get('/all/', response_model = list[schemas.evenement])
 def get_all_evenements(db : Session = Depends(get_db)):
@@ -43,6 +29,8 @@ def get_all_evenements(db : Session = Depends(get_db)):
 def get_evenement(id : int, db : Session = Depends(get_db)):
     try:
         evenement = db.query(models.Evenement).filter(models.Evenement.id == id).first()
+        if not evenement:
+            raise HTTPException(status_code=404, detail="Event not found")
         return evenement
     except Exception as e:
         raise HTTPException(status_code = 400, detail = str(e))
@@ -80,6 +68,8 @@ def add_evenement(request : schemas.evenement, db : Session = Depends(get_db)):
 def delete_evenement(id : int, db : Session = Depends(get_db)):
     try:
         evenement_to_delete = db.query(models.Evenement).filter(models.Evenement.id == id).first()
+        if not evenement_to_delete:
+            raise HTTPException(status_code=404, detail="Event not found")
         db.delete(evenement_to_delete)
         db.commit()
         return JSONResponse({
@@ -93,6 +83,8 @@ def delete_evenement(id : int, db : Session = Depends(get_db)):
 def update_evenement(request : schemas.evenement, id : int, db : Session = Depends(get_db)):
     try:
         evenement_to_update = db.query(models.Evenement).filter(models.Evenement.id == id).first()
+        if not evenement_to_update:
+            raise HTTPException(status_code=404, detail="Event not found")
         updated_evenement = request.dict(exclude_unset=True)
         for key, value in updated_evenement.items():
             setattr(evenement_to_update, key, value)

@@ -73,6 +73,8 @@ def get_categorie(id : int, db:Session = Depends(get_db)):
 def update_categorie(id : int, request : schemas.categorie, db : Session = Depends(get_db)):
     try:
         categorie_to_update = db.query(models.Categorie).filter(models.Categorie.id == id).first()
+        if not categorie_to_update:
+            raise HTTPException(status_code=400, detail='Categorie not found')
         updated_categorie = request.dict(exclude_unset=True)
         for key, value in updated_categorie.items():
             setattr(categorie_to_update, key, value)
