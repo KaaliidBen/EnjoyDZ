@@ -1,10 +1,10 @@
-from fastapi import APIRouter,Depends,HTTPException,status
+from fastapi import APIRouter,Depends,HTTPException
 from db import database
 from models import models
 from schemas import schemas
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
-from typing import List
+from utils import get_hashed_password
 
 router = APIRouter(
     prefix='/user',
@@ -36,20 +36,21 @@ def get_user(id:int,db :Session = Depends(get_db)):
         raise HTTPException(400, detail=str(e))
 
 
-#Add a new User
+#Add an Admin -> User with userType set to True
 @router.post('/add/', response_model = schemas.showuser)
-def add_user(request:schemas.createuser ,db :Session = Depends(get_db)):
+def add_admin(request : schemas.addAdmin, db :Session = Depends(get_db)):
     try:
-        hashed_password = request.Password + 'hash'
-        new_user = models.Utilisateur(Nom=request.Nom, 
+        hashed_password = get_hashed_password(request.Password)
+        new_admin = models.Utilisateur(Nom=request.Nom, 
                                       Email=request.Email,
+                                      UserType = True,
                                       HashedPassword = hashed_password)
-        db.add(new_user)
+        db.add(new_admin)
         db.commit()
-        db.refresh(new_user)
-        return new_user
+        db.refresh(new_admin)
+        return new_admin
     except Exception as e:
-        raise HTTPException(400, detail = str(e))
+        raise HTTPException(status_code = 400, detail = str(e))
 
 #Modify a User
 @router.post('/{id}/modify/', response_model = schemas.showuser)
@@ -57,7 +58,7 @@ def modify_user(request : schemas.showuser, id : int, db : Session = Depends(get
     try:
         user_to_update = db.query(models.Utilisateur).filter(models.Utilisateur.id == id).first()
         updated_user = request.dict(exclude_unset=True)
-        for key, value in updated_user.items():
+        for key, value in updated_user.items() :
             setattr(user_to_update, key, value)
         db.add(user_to_update)
         db.commit()
@@ -71,9 +72,39 @@ def modify_user(request : schemas.showuser, id : int, db : Session = Depends(get
 #Delete a User
 @router.delete('/{id}/delete/')
 def delete_user(id : int, db : Session = Depends(get_db)):
-    user_to_delete = db.query(models.Utilisateur).filter(models.Utilisateur.id == id).first()
-    db.delete(user_to_delete)
-    db.commit()
+    try:
+        user_to_delete = db.query(models.Utilisateur).filter(models.Utilisateur.id == id).first()
+        db.delete(user_to_delete)
+        db.commit()
 
-    return {"message" : "User deleted"}
+        return JSONResponse({
+            "message" : "User deleted"
+        })
+    except Exception as e:
+        raise HTTPException(status_code = 400, detail = str(e))
 
+
+#Get User's favorite Points
+@router.get('/{id}/favorites', response_model = list[schemas.point])
+def get_favorites(id : int, db : Session = Depends(get_db)):
+    try:
+        user = db.query(models.Utilisateur).filter(models.Utilisateur.id == id).first()
+        if not user:
+            raise HTTPException(status_code = 404, detail = "User not found")
+        user_favorite_points = user.favoris
+        return user_favorite_points
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+
+#Get User's notifications
+@router.get("/{id}/notifications", response_model=list[schemas.notification])
+def get_notifications(id : int, db : Session = Depends(get_db)):
+    try:
+        user = db.query(models.Utilisateur).filter(models.Utilisateur.id == id).first()
+        if not user:
+            raise HTTPException(status_code = 404, detail = "User not found")
+        notifications = user.notifications
+        return notifications
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

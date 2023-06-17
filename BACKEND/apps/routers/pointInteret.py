@@ -19,7 +19,7 @@ get_db=database.get_db
 #response_model=schemas.pointCreate
 
 #Get an Interest Point based on id
-@router.get('/{id}/',response_model=schemas.point)
+@router.get('/{id}/',response_model = schemas.point)
 def get_point(id : int, db : Session = Depends(get_db)):
     try:
         point = db.query(models.PointInteret).filter(models.PointInteret.id == id).first()
@@ -29,23 +29,25 @@ def get_point(id : int, db : Session = Depends(get_db)):
 
 
 #Adds an Interest Point
-@router.post('/add/', status_code=status.HTTP_201_CREATED)
+@router.post('/add/', response_model= schemas.point, status_code=status.HTTP_201_CREATED)
 def create_new_point(request : schemas.point,
            themeid : int,
            categorieid : int,
            db : Session = Depends(get_db),
-           lieuid : Optional[int] = 0
            ) :
     try:
         new_point = models.PointInteret(
             Nom = request.Nom, 
             Description = request.Description,
             Wilaya = request.Wilaya,
-            Lieu_id = lieuid,
+            Region = request.Region,
+            Latitude = request.Latitude,
+            Longitude = request.Longitude,
+            DateOuverture = request.DateOuverture,
+            DateFermeture = request.DateFermeture,
             Theme_id = themeid,
             Categorie_id = categorieid
             )
-
         db.add(new_point)
         db.commit()
         db.refresh(new_point)
@@ -59,7 +61,7 @@ def create_new_point(request : schemas.point,
 @router.get('/all', response_model = list[schemas.point])
 def get_all_points(db : Session = Depends(get_db)):
     try:
-        points = db.query(models.PointInteret).filter().all()
+        points = db.query(models.PointInteret).all()
         return points
     except Exception as e:
         raise HTTPException(status_code = 400, detail = str(e))
@@ -68,7 +70,10 @@ def get_all_points(db : Session = Depends(get_db)):
 @router.delete('/{id}/delete/')
 def delete_point(id:int, db:Session = Depends(get_db)):
     try:
-        point = db.query(models.PointInteret).filter(models.PointInteret.id == id).delete()
+        point = db.query(models.PointInteret).filter(models.PointInteret.id == id).first()
+        if not point : 
+            raise HTTPException(status_code=404, detail="Point not found")
+        db.delete(point)
         db.commit()
         if not point : return JSONResponse({"Result":"already deleted"})
 
@@ -100,7 +105,8 @@ def getPointsBySearch(search: str = '',db :Session = Depends(get_db)):
     try:
         Points = db.query(models.PointInteret).filter(or_(models.PointInteret.Description.contains(search),
                                                           models.PointInteret.Nom.contains(search),
-                                                          models.PointInteret.Wilaya.contains(search))).all()
+                                                          models.PointInteret.Wilaya.contains(search),
+                                                          models.PointInteret.Region.contains(search))).all()
         return Points
     except Exception as e:
         raise HTTPException(status_code = 400, detail = str(e))
@@ -111,6 +117,8 @@ def getPointsBySearch(search: str = '',db :Session = Depends(get_db)):
 def update_point(id : int, request : schemas.point, db : Session = Depends(get_db)):
     try:
         point_to_update = db.query(models.PointInteret).filter(models.PointInteret.id == id).first()
+        if not point_to_update : 
+            raise HTTPException(status_code=404, detail="Point not found")
         updated_point = request.dict(exclude_unset=True)
         for key, value in updated_point.items():
             setattr(point_to_update, key, value)
@@ -120,3 +128,21 @@ def update_point(id : int, request : schemas.point, db : Session = Depends(get_d
         return point_to_update
     except Exception as e:
         raise HTTPException(status_code = 400, detail = str(e))
+    
+
+#Add Point to User's favorite
+@router.post('/{id}/addFavorite', response_model = schemas.point)
+def add_favorite_point(id : int, user_id : int, db : Session = Depends(get_db)):
+    try:
+        user = db.query(models.Utilisateur).filter(models.Utilisateur.id == user_id).first()
+        if not user : 
+            raise HTTPException(status_code=404, detail="User not found")
+        point = db.query(models.PointInteret).filter(models.PointInteret.id == id).first()
+        if not point : 
+            raise HTTPException(status_code=404, detail="Point not found")
+        user.favoris.append(point)
+        db.add(user)
+        db.commit()
+        return point
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

@@ -31,6 +31,13 @@ class point(BaseModel):
     Nom : str
     Description : str
     Wilaya : str
+    Region : str
+    DateOuverture : datetime
+    DateFermeture : datetime
+    Latitude : float
+    Longitude : float
+    themes : Optional[theme]
+    categories : Optional[categorie]
 
     class Config(): 
         orm_mode=True 
@@ -41,7 +48,7 @@ class evenement(BaseModel):
     Description : str
     DateDebut : datetime
     DateFin : datetime
-    point_id : int
+    evPoint : point
 
     class Config():
         orm_mode = True
@@ -59,18 +66,26 @@ class showuser(BaseModel):
     Nom : str
     Email : str
     UserType : Optional[bool]
-    #token : Optional[str] 
+    #token : Optional[str]
     HashedPassword : str
     class Config():
         orm_mode=True
 
 class createuser(BaseModel):
     Nom : str
-    Email : str 
-    #token : str 
+    #token : str
+    Email : str
+    #token : str
     Password : str
     class Config():
         orm_mode=True
+
+class addAdmin(BaseModel):
+    Nom : str
+    Email : str
+    Password : str
+    class Config():
+        orm_mode = True
 
 class TokenPayload(BaseModel):
     sub: str = None
@@ -102,3 +117,12 @@ class commentaire(BaseModel):
 
     class Config():
         orm_mode = True
+
+
+class notification(BaseModel):
+    id : Optional[int]
+    Content : str
+    Read : bool
+    user_id : int
+    class Config():
+        orm_mode=True

@@ -14,6 +14,19 @@ router = APIRouter(
 
 get_db = database.get_db
 
+def sendNotification(Description : str, point_id : int, db):
+    point = db.query(models.PointInteret).filter(models.PointInteret.id == point_id).first()
+    following_users = point.fans
+    for user in following_users:
+        new_notification = models.Notification(
+            Content = f"New event at {point.Nom} : {Description}",
+            Read = False
+        )
+        user.notifications.append(new_notification)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
 
 #Get all Evenements
 @router.get('/all/', response_model = list[schemas.evenement])
@@ -46,9 +59,17 @@ def add_evenement(request : schemas.evenement, db : Session = Depends(get_db)):
             point_id = request.point_id
         )
         db.add(new_evenement)
+        point = db.query(models.PointInteret).filter(models.PointInteret.id == request.point_id).first()
+        following_users = point.fans
+        for user in following_users:
+            new_notification = models.Notification(
+                Content = f"New event at {point.Nom} : {request.Description}",
+                Read = False
+            )
+            user.notifications.append(new_notification)
+            db.add(user)
         db.commit()
         db.refresh(new_evenement)
-
         return new_evenement
     except Exception as e:
         raise HTTPException(status_code = 400, detail = str(e))

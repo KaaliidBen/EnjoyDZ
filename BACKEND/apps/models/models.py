@@ -1,4 +1,4 @@
-from sqlalchemy import Column,Integer,String,ForeignKey,Boolean,TEXT,DateTime,Table
+from sqlalchemy import Column,Integer,String,ForeignKey,Boolean,TEXT,DateTime,Table, Float
 from db.database import Base
 from sqlalchemy.orm import relationship
 
@@ -18,9 +18,15 @@ class PointInteret(Base):
     Nom = Column(String)
     Description = Column(TEXT)
     Wilaya = Column(String)
+    Region = Column(String)
+    DateOuverture = Column(DateTime)
+    DateFermeture = Column(DateTime)
 
-    Lieu_id = Column(Integer,ForeignKey('lieux.id'))
-    lieu = relationship("Lieu", back_populates='points')
+    Latitude = Column(Float)
+    Longitude = Column(Float)
+
+    #Lieu_id = Column(Integer,ForeignKey('lieux.id'))
+    #lieu = relationship("Lieu", back_populates='points')
 
     commentaires = relationship("Commentaire",back_populates='cmPoint')
 
@@ -36,17 +42,15 @@ class PointInteret(Base):
 
     fans = relationship('Utilisateur', secondary=user_point_table, back_populates='favoris')
 
-    
+'''   
 class Lieu(Base):
     __tablename__='lieux'
     id = Column(Integer, primary_key=True,index=True)
     Nom = Column(String)
     Description = Column(TEXT)
-    DateOuverture = Column(DateTime)
-    DateFermeture = Column(DateTime)
 
     points = relationship("PointInteret", back_populates='lieu')
-
+'''
 
 class Theme(Base):
     __tablename__='themes'
@@ -95,9 +99,11 @@ class Utilisateur(Base):
 
     commentaires = relationship("Commentaire", back_populates='cmUser')
 
+    notifications = relationship("Notification", back_populates='user_notifications')
+
 
 class Evenement(Base):
-    __tablename__='evenements'
+    __tablename__ = 'evenements'
     id = Column(Integer, primary_key = True, index = True)
     Nom = Column(String)
     Description = Column(TEXT)
@@ -105,4 +111,14 @@ class Evenement(Base):
     DateFin = Column(DateTime)
 
     point_id = Column(Integer,ForeignKey('points.id'))
-    evPoint = relationship("PointInteret", back_populates='evenements')    
+    evPoint = relationship("PointInteret", back_populates='evenements')  
+
+
+class Notification(Base):
+    __tablename__ = 'notifications'
+    id = Column(Integer, primary_key=True, index=True)
+    Content = Column(TEXT)
+    Read = Column(Boolean)
+
+    user_id = Column(Integer, ForeignKey('utilisateurs.id'))
+    user_notifications = relationship("Utilisateur", back_populates='notifications')
